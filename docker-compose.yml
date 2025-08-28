@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  generator:
+    build: ./generator
+    volumes:
+      - ./data:/data
+    command: python generate_ads.py
+
+  server:
+    build: ./server
+    volumes:
+      - ./data:/data
+    ports:
+      - "4000:4000"
+    command: npm start
+
+  admin-console:
+    build: ./admin-console
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+  bots:
+    build: ./bots
+    volumes:
+      - ./data:/data
+      - ./assets:/assets
+    command: node craigslist_bot.js  # rotate per cron
